@@ -1,94 +1,112 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard — Empleado</x-slot>
+    <x-slot name="title">Panel de Empleado</x-slot>
 
-    {{-- Encabezado --}}
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-800">
-            Bienvenido, {{ auth()->user()->name }} 👋
-        </h1>
-        <p class="text-gray-500 text-sm mt-1">Panel de empleado — gestión de productos</p>
-    </div>
+    {{-- Stats --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px;">
 
-    {{-- Tarjetas de estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-600">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total productos</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['total_productos'] }}</p>
-            <a href="{{ route('products.index') }}" class="text-xs text-blue-600 mt-2 inline-block hover:underline">Ver catálogo →</a>
+        <div class="stat-card" style="border-color:#3b4fd8;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Total productos</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ number_format($stats['total_productos']) }}
+            </p>
+            <a href="{{ route('products.index') }}" style="font-size:12px;color:#3b4fd8;text-decoration:none;">Ver catálogo →</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-yellow-400">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Mis productos</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['mis_productos'] }}</p>
-            <p class="text-xs text-gray-400 mt-2">Registrados por ti</p>
+        <div class="stat-card" style="border-color:#f59e0b;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Mis productos</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ $stats['mis_productos'] }}
+            </p>
+            <p style="font-size:12px;color:#94a3b8;">Registrados por ti</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-400">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Sin stock</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['sin_stock'] }}</p>
-            <p class="text-xs text-red-400 mt-2">Requieren atención</p>
+        <div class="stat-card" style="border-color:#dc2626;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Sin stock</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ $stats['sin_stock'] }}
+            </p>
+            @if($stats['sin_stock'] > 0)
+                <p style="font-size:12px;color:#dc2626;">Requieren atención</p>
+            @else
+                <p style="font-size:12px;color:#16a34a;">Todo en stock ✓</p>
+            @endif
         </div>
 
     </div>
 
     {{-- Accesos rápidos --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
         <a href="{{ route('products.create') }}"
-           class="flex items-center gap-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 transition shadow-sm">
-            <div class="bg-white/20 rounded-lg p-2">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+           style="display:flex;align-items:center;gap:16px;background:#3b4fd8;
+                  border-radius:14px;padding:20px 24px;text-decoration:none;
+                  transition:background 0.15s;"
+           onmouseover="this.style.background='#3040c0'"
+           onmouseout="this.style.background='#3b4fd8'">
+            <div style="width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:10px;
+                display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                 </svg>
             </div>
             <div>
-                <p class="font-semibold">Registrar producto</p>
-                <p class="text-sm text-blue-200">Agregar un nuevo ítem al catálogo</p>
+                <p style="color:#fff;font-weight:700;font-size:15px;margin:0;">Registrar producto</p>
+                <p style="color:rgba(255,255,255,0.65);font-size:12px;margin-top:2px;">Agregar al catálogo</p>
             </div>
         </a>
 
         <a href="{{ route('products.index') }}"
-           class="flex items-center gap-4 bg-white hover:bg-gray-50 text-gray-800 rounded-xl p-5 transition shadow-sm border border-gray-200">
-            <div class="bg-blue-100 rounded-lg p-2">
-                <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+           style="display:flex;align-items:center;gap:16px;background:#fff;
+                  border-radius:14px;padding:20px 24px;text-decoration:none;
+                  border:1px solid #e2e8f0;transition:background 0.15s;"
+           onmouseover="this.style.background='#f8fafc'"
+           onmouseout="this.style.background='#fff'">
+            <div style="width:44px;height:44px;background:#eff6ff;border-radius:10px;
+                display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#3b4fd8" stroke-width="2">
+                    <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                 </svg>
             </div>
             <div>
-                <p class="font-semibold">Ver catálogo</p>
-                <p class="text-sm text-gray-400">Consultar todos los productos</p>
+                <p style="color:#0f172a;font-weight:700;font-size:15px;margin:0;">Ver catálogo</p>
+                <p style="color:#94a3b8;font-size:12px;margin-top:2px;">Consultar todos los productos</p>
             </div>
         </a>
+
     </div>
 
-    {{-- Productos recientes --}}
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="font-semibold text-gray-700">Productos recientes</h2>
+    {{-- Tabla productos recientes --}}
+    <div class="card">
+        <div class="card-header">
+            <h3>Productos Recientes</h3>
         </div>
-        <div class="divide-y divide-gray-50">
-            @forelse ($productos_recientes as $producto)
-                <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition">
-                    <div>
-                        <p class="text-sm font-medium text-gray-800">{{ $producto->name }}</p>
-                        <p class="text-xs text-gray-400">{{ $producto->category }} · Por {{ $producto->user->name }}</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm font-semibold text-gray-700">
-                            ${{ number_format($producto->price, 0, ',', '.') }}
-                        </span>
-                        <span class="text-xs px-2 py-0.5 rounded-full
-                            {{ $producto->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                            Stock: {{ $producto->stock }}
-                        </span>
-                        <a href="{{ route('products.edit', $producto) }}"
-                           class="text-xs text-blue-600 hover:underline">Editar</a>
-                    </div>
+        <div class="table-header" style="grid-template-columns:2fr 1.5fr 1fr 1.2fr 0.8fr;">
+            <span>Producto</span><span>Categoría</span><span>Stock</span><span>Precio</span><span>Acción</span>
+        </div>
+        @forelse ($productos_recientes as $producto)
+            <div class="table-row" style="grid-template-columns:2fr 1.5fr 1fr 1.2fr 0.8fr;">
+                <div>
+                    <p style="font-weight:600;color:#0f172a;">{{ $producto->name }}</p>
+                    <p style="font-size:11px;color:#94a3b8;">por {{ $producto->user->name }}</p>
                 </div>
-            @empty
-                <p class="px-6 py-4 text-sm text-gray-400">No hay productos registrados aún.</p>
-            @endforelse
+                <span style="color:#64748b;">{{ $producto->category }}</span>
+                <span class="{{ $producto->stock > 0 ? 'stock-ok' : 'stock-out' }}">
+                    {{ str_pad($producto->stock, 2, '0', STR_PAD_LEFT) }}
+                </span>
+                <span style="font-weight:600;color:#0f172a;">${{ number_format($producto->price, 2) }}</span>
+                <a href="{{ route('products.edit', $producto) }}" class="btn-secondary" style="padding:5px 12px;">
+                    Editar
+                </a>
+            </div>
+        @empty
+            <div style="padding:32px;text-align:center;color:#94a3b8;font-size:13px;">
+                No hay productos registrados aún.
+            </div>
+        @endforelse
+        <div style="padding:14px 24px;border-top:1px solid #f1f5f9;text-align:right;">
+            <a href="{{ route('products.index') }}" style="font-size:13px;color:#3b4fd8;text-decoration:none;font-weight:500;">
+                Ver todos →
+            </a>
         </div>
     </div>
 

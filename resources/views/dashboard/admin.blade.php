@@ -1,107 +1,149 @@
 <x-app-layout>
-    <x-slot name="title">Dashboard — Admin</x-slot>
+    <x-slot name="title">Panel de Administración</x-slot>
 
-    {{-- Encabezado --}}
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-800">
-            Bienvenido, {{ auth()->user()->name }} 👋
-        </h1>
-        <p class="text-gray-500 text-sm mt-1">Panel de administración — visión general del sistema</p>
-    </div>
+    {{-- Stats --}}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px;">
 
-    {{-- Tarjetas de estadísticas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-blue-600">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Total productos</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['total_productos'] }}</p>
-            <a href="{{ route('products.index') }}" class="text-xs text-blue-600 mt-2 inline-block hover:underline">Ver todos →</a>
+        <div class="stat-card" style="border-color:#3b4fd8;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Total productos</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ number_format($stats['total_productos']) }}
+            </p>
+            <a href="{{ route('products.index') }}" style="font-size:12px;color:#3b4fd8;text-decoration:none;">Ver catálogo →</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Usuarios registrados</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['total_usuarios'] }}</p>
-            <a href="{{ route('users.index') }}" class="text-xs text-green-600 mt-2 inline-block hover:underline">Ver todos →</a>
+        <div class="stat-card" style="border-color:#16a34a;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Usuarios registrados</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ number_format($stats['total_usuarios']) }}
+            </p>
+            <a href="{{ route('users.index') }}" style="font-size:12px;color:#16a34a;text-decoration:none;">Ver usuarios →</a>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-red-400">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Sin stock</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['sin_stock'] }}</p>
-            <p class="text-xs text-red-400 mt-2">Requieren atención</p>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Categorías</p>
-            <p class="text-3xl font-bold text-gray-800 mt-1">{{ $stats['categorias'] }}</p>
-            <p class="text-xs text-gray-400 mt-2">Categorías activas</p>
+        <div class="stat-card" style="border-color:#9333ea;">
+            <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.5px;">Categorías</p>
+            <p style="font-size:32px;font-weight:800;color:#0f172a;margin:6px 0 4px;">
+                {{ $stats['categorias'] }}
+            </p>
+            @if($stats['sin_stock'] > 0)
+                <p style="font-size:12px;color:#dc2626;">⚠ {{ $stats['sin_stock'] }} sin stock</p>
+            @else
+                <p style="font-size:12px;color:#16a34a;">✓ Todo con stock</p>
+            @endif
         </div>
 
     </div>
 
-    {{-- Tablas recientes --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {{-- Tabla actividad reciente --}}
+    <div class="card">
+        <div class="card-header">
+            <h3>Actividad Reciente del Inventario</h3>
+            <a href="{{ route('products.create') }}" class="btn-primary">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                </svg>
+                + Nuevo Producto
+            </a>
+        </div>
 
-        {{-- Productos recientes --}}
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="font-semibold text-gray-700">Productos recientes</h2>
-                <a href="{{ route('products.create') }}"
-                   class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition">
-                    + Nuevo
-                </a>
+        {{-- Encabezado tabla --}}
+        <div class="table-header" style="grid-template-columns:2fr 2fr 1fr 1.2fr 1fr;">
+            <span>Producto</span>
+            <span>Último cambio</span>
+            <span>Stock</span>
+            <span>Precio</span>
+            <span>Acciones</span>
+        </div>
+
+        {{-- Filas --}}
+        @forelse ($productos_recientes as $producto)
+            <div class="table-row" style="grid-template-columns:2fr 2fr 1fr 1.2fr 1fr;">
+                <div>
+                    <p style="font-weight:600;color:#0f172a;font-size:13px;">{{ $producto->name }}</p>
+                    <p style="font-size:11px;color:#94a3b8;">{{ $producto->category }}</p>
+                </div>
+                <div>
+                    <p style="font-size:13px;color:#374151;">
+                        {{ $producto->updated_at->diffForHumans() }}
+                    </p>
+                    <p style="font-size:11px;color:#94a3b8;">por {{ $producto->user->name }}</p>
+                </div>
+                <div>
+                    <span class="{{ $producto->stock > 0 ? 'stock-ok' : 'stock-out' }}">
+                        {{ str_pad($producto->stock, 2, '0', STR_PAD_LEFT) }}
+                    </span>
+                </div>
+                <div style="font-weight:600;color:#0f172a;">
+                    ${{ number_format($producto->price, 2) }}
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <a href="{{ route('products.show', $producto) }}" class="icon-btn icon-btn-view" title="Ver">
+                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </a>
+                    <a href="{{ route('products.edit', $producto) }}" class="icon-btn icon-btn-edit" title="Editar">
+                        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </a>
+                    <form method="POST" action="{{ route('products.destroy', $producto) }}"
+                          onsubmit="return confirm('¿Eliminar este producto?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="icon-btn icon-btn-del" title="Eliminar">
+                            <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                                <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
-            <div class="divide-y divide-gray-50">
-                @forelse ($productos_recientes as $producto)
-                    <div class="px-6 py-3 flex items-center justify-between hover:bg-gray-50 transition">
-                        <div>
-                            <p class="text-sm font-medium text-gray-800">{{ $producto->name }}</p>
-                            <p class="text-xs text-gray-400">{{ $producto->category }}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-sm font-semibold text-gray-700">
-                                ${{ number_format($producto->price, 0, ',', '.') }}
-                            </p>
-                            <span class="text-xs px-2 py-0.5 rounded-full
-                                {{ $producto->stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                                Stock: {{ $producto->stock }}
-                            </span>
-                        </div>
+        @empty
+            <div style="padding:32px;text-align:center;color:#94a3b8;font-size:13px;">
+                No hay productos registrados aún.
+            </div>
+        @endforelse
+
+        {{-- Ver todos --}}
+        <div style="padding:14px 24px;border-top:1px solid #f1f5f9;text-align:right;">
+            <a href="{{ route('products.index') }}" style="font-size:13px;color:#3b4fd8;text-decoration:none;font-weight:500;">
+                Ver todos los productos →
+            </a>
+        </div>
+    </div>
+
+    {{-- Usuarios recientes --}}
+    <div class="card" style="margin-top:24px;">
+        <div class="card-header">
+            <h3>Usuarios Recientes</h3>
+            <a href="{{ route('users.create') }}" class="btn-primary" style="background:#16a34a;">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                </svg>
+                + Nuevo Usuario
+            </a>
+        </div>
+        <div class="table-header" style="grid-template-columns:2fr 2fr 1fr;">
+            <span>Nombre</span><span>Correo</span><span>Rol</span>
+        </div>
+        @forelse ($usuarios_recientes as $usuario)
+            <div class="table-row" style="grid-template-columns:2fr 2fr 1fr;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:30px;height:30px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#3b4fd8;flex-shrink:0;">
+                        {{ strtoupper(substr($usuario->name, 0, 2)) }}
                     </div>
-                @empty
-                    <p class="px-6 py-4 text-sm text-gray-400">No hay productos registrados.</p>
-                @endforelse
+                    <span style="font-weight:600;color:#0f172a;">{{ $usuario->name }}</span>
+                </div>
+                <span style="color:#64748b;">{{ $usuario->email }}</span>
+                <span class="badge-rol {{ $usuario->hasRole('admin') ? 'badge-admin' : 'badge-emp' }}">
+                    {{ ucfirst($usuario->getRoleNames()->first() ?? 'Sin rol') }}
+                </span>
             </div>
-        </div>
-
-        {{-- Usuarios recientes --}}
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="font-semibold text-gray-700">Usuarios recientes</h2>
-                <a href="{{ route('users.create') }}"
-                   class="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition">
-                    + Nuevo
-                </a>
-            </div>
-            <div class="divide-y divide-gray-50">
-                @forelse ($usuarios_recientes as $usuario)
-                    <div class="px-6 py-3 flex items-center gap-3 hover:bg-gray-50 transition">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-semibold text-xs flex-shrink-0">
-                            {{ strtoupper(substr($usuario->name, 0, 2)) }}
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-800">{{ $usuario->name }}</p>
-                            <p class="text-xs text-gray-400">{{ $usuario->email }}</p>
-                        </div>
-                        <span class="text-xs px-2 py-0.5 rounded-full capitalize
-                            {{ $usuario->hasRole('admin') ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600' }}">
-                            {{ $usuario->getRoleNames()->first() ?? 'Sin rol' }}
-                        </span>
-                    </div>
-                @empty
-                    <p class="px-6 py-4 text-sm text-gray-400">No hay usuarios registrados.</p>
-                @endforelse
-            </div>
-        </div>
-
+        @empty
+            <div style="padding:24px;text-align:center;color:#94a3b8;font-size:13px;">Sin usuarios.</div>
+        @endforelse
     </div>
+
 </x-app-layout>
