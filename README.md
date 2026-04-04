@@ -72,8 +72,8 @@ Accede en: http://localhost:8000
 
 | Rol              | Email                         | Contraseña   |
 |------------------|-------------------------------|--------------|
-| Administrador    | admin@gestiontienda.com       |  1234        |
-| Empleado         | empleado@gestiontienda.com    |  5678        |
+| Administrador    | admin@gestiontienda.com       |  password    |
+| Empleado         | empleado@gestiontienda.com    |  password    |
 
 ##  Estructura del proyecto
 ```bash
