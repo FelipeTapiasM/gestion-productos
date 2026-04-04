@@ -4,13 +4,13 @@ Aplicacion web desarrollada con Laravel 12 que permite gestionar el catálogo de
 
 ## Tecnologias
 
-- PHP 8.2+
-- Laravel 12
-- MySQL (con HeidiSQL)
+- PHP 8.2+ - Lenguaje backend
+- Laravel 12 - Framework principal
+- MySQL (con HeidiSQL) - Base de datos
 - Laravel Breeze — autenticacion
 - spatie/laravel-permission — roles y permisos
 - Blade — motor de plantillas
-- Tailwind CSS — estilos
+- Tailwind CSS — estilos    
 - Node.js / npm — compilacion de assets
 
 ## Requisitos previos
@@ -18,7 +18,7 @@ Aplicacion web desarrollada con Laravel 12 que permite gestionar el catálogo de
 - PHP 8.2 o superior
 - Composer
 - Node.js y npm
-- MySQL o MariaDB
+- MySQL o MariaDB(Laragon)
 - Git
 
 ## Instalacion y ejecucion
@@ -58,11 +58,15 @@ Crea una base de datos llamada gestion_tienda en MySQL.
 ```bash
 php artisan migrate --seed
 ```
-7. Compilar assets
+7. Crear enlace de storage para imágenes
+```bash
+php artisan storage:link
+```
+8. Compilar assets
 ```bash
 npm run dev
 ```
-8. Iniciar el servidor
+9. Iniciar el servidor
 ```bash
 php artisan serve
 Accede en: http://localhost:8000
@@ -72,22 +76,45 @@ Accede en: http://localhost:8000
 
 | Rol              | Email                         | Contraseña   |
 |------------------|-------------------------------|--------------|
-| Administrador    | admin@gestiontienda.com       |  1234        |
-| Empleado         | empleado@gestiontienda.com    |  5678        |
+| Administrador    | admin@gestiontienda.com       |  password    |
+| Empleado         | empleado@gestiontienda.com    |  password    |
 
 ##  Estructura del proyecto
 ```bash
 gestion-tienda/
-├── app/Http/Controllers/   # Controladores
-├── app/Models/             # Modelos Eloquent
-├── app/Services/           # Lógica de negocio
-├── database/migrations/    # Migraciones de BD
-├── database/seeders/       # Datos de prueba
-├── resources/views/        # Vistas Blade
-├── routes/web.php          # Rutas
-├── tests/                  # Pruebas automatizadas
-└── docs/                   # Documentación completa
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── DashboardController.php
+│   │   │   ├── ProductController.php
+│   │   │   └── UserController.php
+│   │   └── Middleware/
+│   │       └── RoleMiddleware.php
+│   └── Models/
+│       ├── User.php
+│       └── Product.php
+├── database/
+│   ├── migrations/
+│   ├── seeders/
+│   └── factories/
+├── resources/views/
+│   ├── layouts/app.blade.php
+│   ├── dashboard/
+│   ├── products/
+│   └── users/
+├── routes/web.php
+├── tests/
+│   ├── Unit/ProductTest.php
+│   └── Feature/
+│       ├── AuthTest.php
+│       ├── RoleAuthorizationTest.php
+│       └── ProductCrudTest.php
+└── docs/
 ```
+## URL pública
+
+Railway genera una URL como: https://gestion-tienda-production.up.railway.app
+
 ## Documentacion
 
 Toda la documentación del proyecto se encuentra en la carpeta docs/:
@@ -95,6 +122,8 @@ Toda la documentación del proyecto se encuentra en la carpeta docs/:
 - [docs/diagramas/](docs/Diagramas/). — Diagramas UML y modelo entidad-relación
 - [docs/mockups/](docs/Mockups/). — Wireframes de las interfaces
 - [docs/manuales/](docs/Manuales/). — Manual de usuario y manual técnico
+- [docs/pruebas/](docs/pruebas/). — Casos de prueba del sistema
+
 
 ## Ejecutar pruebas
 ```bash
