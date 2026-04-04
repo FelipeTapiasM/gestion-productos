@@ -36,6 +36,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ── Gestión de usuarios (solo Admin) ─────────────────────────────────
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('users', UserController::class)
-            ->only(['index', 'create', 'store', 'edit', 'update']);
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     });
 });

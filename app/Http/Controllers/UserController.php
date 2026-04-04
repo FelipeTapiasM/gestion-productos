@@ -86,4 +86,34 @@ class UserController extends Controller
             ->route('users.index')
             ->with('success', 'Usuario actualizado correctamente.');
     }
+
+    /**
+     * Eliminar usuario (solo Admin).
+     * Regla: el Admin no puede eliminarse a sí mismo.
+     */
+    public function destroy(User $user)
+    {
+        // Protección: no puede eliminarse a sí mismo
+        if ($user->id === auth()->id()) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+ 
+        // Protección: no se puede eliminar al último Admin
+        if ($user->hasRole('admin')) {
+            $totalAdmins = User::role('admin')->count();
+            if ($totalAdmins <= 1) {
+                return redirect()
+                    ->route('users.index')
+                    ->with('error', 'No puedes eliminar el único administrador del sistema.');
+            }
+        }
+ 
+        $user->delete();
+ 
+        return redirect()
+            ->route('users.index')
+            ->with('success', "Usuario «{$user->name}» eliminado correctamente.");
+    }
 }
